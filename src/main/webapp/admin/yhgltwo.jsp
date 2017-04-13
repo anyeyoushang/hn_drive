@@ -1,0 +1,381 @@
+<%@ page language="java" pageEncoding="UTF-8" contentType="text/html; charset=UTF-8"%>
+<script type="text/javascript">
+	$(function() {
+		$('#admin_yhgl_datagrid').datagrid({
+			url : '${pageContext.request.contextPath}/user/yhglDate',
+			fit : true,
+			fitColumns : true,
+			border : false,
+			pagination : true,
+			idField : 'userId',
+			pageSize : 15,
+			pageList : [ 15, 20, 30, 40, 50 ],
+			sortName : 'name',
+			sortOrder : 'asc',
+			checkOnSelect : false,
+			selectOnCheck : false,
+			nowrap : false,
+			frozenColumns : [ [ {
+				field : 'userId',
+				title : '编号',
+				width : 150,
+				checkbox : true
+			}, {
+				field : 'userPhone',
+				title : '手机号码',
+				width : 80,
+				sortable : true
+			} ] ],
+			columns : [ [ {
+				field : 'userName',
+				title : '用户名',
+				width : 60,
+				/* formatter : function(value, row, index) {
+					return '******';
+				} */
+			}, {
+				field : 'IDcard',
+				title : '身份证号',
+				width : 150,
+				sortable : true
+			}, {
+				field : 'userRole',
+				title : '用户角色',
+				width : 150,
+				sortable : true,
+				formatter : function(value, row, index) {
+					if(value == 1){
+						return '用户';
+					}else{
+						return '司机';
+					}
+					return '******';
+				}
+			}, {
+				field : 'addTime',
+				title : '所属角色ID',
+				width : 150,
+				hidden : true
+			}, {
+				field : 'roleNames',
+				title : '所属角色名称',
+				width : 150
+			}, {
+				field : 'action',
+				title : '动作',
+				width : 100,
+				formatter : function(value, row, index) {
+					if (row.id == '0') {
+						return '系统用户';
+					} else {
+						/* <img onclick="admin_yhgl_editFun(\'{0}\');" src="{1}"/>
+						&nbsp;
+						<img onclick="admin_yhgl_deleteFun(\'{2}\');" src="{3}"/>
+						&nbsp;
+						<img onclick="admin_yhgl_modifyPwdFun(\'{4}\');" src="{5}"/>',
+						 row.id, '${pageContext.request.contextPath}/style/images/extjs_icons/pencil.png',
+						 row.id, '${pageContext.request.contextPath}/style/images/extjs_icons/cancel.png',
+						 row.id, '${pageContext.request.contextPath}/style/images/extjs_icons/lock/lock_edit.png */
+						return formatString('<img onclick="admin_yhgl_editFun(\'{0}\');" src="{1}"/>&nbsp;<img onclick="admin_yhgl_deleteFun(\'{2}\');" src="{3}"/>&nbsp;<img onclick="admin_yhgl_modifyPwdFun(\'{4}\');" src="{5}"/>', row.id, '${pageContext.request.contextPath}/style/images/extjs_icons/pencil.png', row.id, '${pageContext.request.contextPath}/style/images/extjs_icons/cancel.png', row.id, '${pageContext.request.contextPath}/style/images/extjs_icons/lock/lock_edit.png');
+					}
+				}
+			} ] ],
+			toolbar : [ {
+				text : '增加',
+				iconCls : 'icon-add',
+				handler : function() {
+					admin_yhgl_appendFun();
+				}
+			}, '-', {
+				text : '批量删除',
+				iconCls : 'icon-remove',
+				handler : function() {
+					admin_yhgl_removeFun();
+				}
+			}, '-', {
+				text : '批量设置角色',
+				iconCls : 'icon-edit',
+				handler : function() {
+					admin_yhgl_modifyRoleFun();
+				}
+			}, '-' ]
+		});
+	});
+	// 搜索
+	function admin_yhgl_searchFun() {
+		$('#admin_yhgl_datagrid').datagrid('load', serializeObject($('#admin_yhgl_searchForm')));
+	}
+	// 清空搜索
+	function admin_yhgl_cleanFun() {
+		$('#admin_yhgl_searchForm input').val('');
+		$('#admin_yhgl_datagrid').datagrid('load', {});
+	}
+	
+	// 编辑
+	function admin_yhgl_editFun(id) {
+		console.log(id);
+		console.log($('#admin_yhgl_datagrid').datagrid('getSelected').userId);
+		// $('#admin_yhgl_datagrid').datagrid('uncheckAll').datagrid('unselectAll').datagrid('clearSelections');
+		/* $('<div/>').dialog({
+			href : '${pageContext.request.contextPath}/admin/yhglEdit.jsp',
+			width : 520,
+			height : 200,
+			modal : true,
+			title : '编辑用户',
+			buttons : [ {
+				text : '编辑',
+				iconCls : 'icon-edit',
+				handler : function() {
+					var d = $(this).closest('.window-body');
+					$('#admin_yhglEdit_editForm').form('submit', {
+						url : '${pageContext.request.contextPath}/userController/edit.action',
+						success : function(result) {
+							try {
+								var r = $.parseJSON(result);
+								if (r.success) {
+									$('#admin_yhgl_datagrid').datagrid('updateRow', {
+										index : $('#admin_yhgl_datagrid').datagrid('getRowIndex', id),
+										row : r.obj
+									});
+									d.dialog('destroy');
+								}
+								$.messager.show({
+									title : '提示',
+									msg : r.msg
+								});
+							} catch (e) {
+								$.messager.alert('提示', result);
+							}
+						}
+					});
+				}
+			} ],
+			onClose : function() {
+				$(this).dialog('destroy');
+			},
+			onLoad : function() {
+				var index = $('#admin_yhgl_datagrid').datagrid('getRowIndex', id);
+				var rows = $('#admin_yhgl_datagrid').datagrid('getRows');
+				var o = rows[index];
+				o.roleIds = stringToList(rows[index].roleIds);
+				$('#admin_yhglEdit_editForm').form('load', o);
+			}
+		}); */
+	}
+	function admin_yhgl_appendFun() {
+		$('#admin_yhgl_datagrid').datagrid('uncheckAll').datagrid('unselectAll').datagrid('clearSelections');
+		$('<div/>').dialog({
+			href : '${pageContext.request.contextPath}/admin/yhglAdd.jsp',
+			width : 520,
+			height : 200,
+			modal : true,
+			title : '添加用户',
+			buttons : [ {
+				text : '增加',
+				iconCls : 'icon-add',
+				handler : function() {
+					var d = $(this).closest('.window-body');
+					$('#admin_yhglAdd_addForm').form('submit', {
+						url : '${pageContext.request.contextPath}/userController/add.action',
+						success : function(result) {
+							try {
+								var r = $.parseJSON(result);
+								if (r.success) {
+									$('#admin_yhgl_datagrid').datagrid('insertRow', {
+										index : 0,
+										row : r.obj
+									});
+									d.dialog('destroy');
+								}
+								$.messager.show({
+									title : '提示',
+									msg : r.msg
+								});
+							} catch (e) {
+								$.messager.alert('提示', result);
+							}
+						}
+					});
+				}
+			} ],
+			onClose : function() {
+				$(this).dialog('destroy');
+			}
+		});
+	}
+	function admin_yhgl_removeFun() {
+		var rows = $('#admin_yhgl_datagrid').datagrid('getChecked');
+		var ids = [];
+		if (rows.length > 0) {
+			$.messager.confirm('确认', '您是否要删除当前选中的项目？', function(r) {
+				if (r) {
+					var currentUserId = '${sessionInfo.userId}';/*当前登录用户的ID*/
+					var flag = false;
+					for ( var i = 0; i < rows.length; i++) {
+						if (currentUserId != rows[i].id) {
+							ids.push(rows[i].id);
+						} else {
+							flag = true;
+						}
+					}
+					$.ajax({
+						url : '${pageContext.request.contextPath}/userController/remove.action',
+						data : {
+							ids : ids.join(',')
+						},
+						dataType : 'json',
+						success : function(result) {
+							if (result.success) {
+								$('#admin_yhgl_datagrid').datagrid('load');
+								$('#admin_yhgl_datagrid').datagrid('uncheckAll').datagrid('unselectAll').datagrid('clearSelections');
+							}
+							if (flag) {
+								$.messager.show({
+									title : '提示',
+									msg : '不可以删除自己！'
+								});
+							} else {
+								$.messager.show({
+									title : '提示',
+									msg : result.msg
+								});
+							}
+						}
+					});
+				}
+			});
+		} else {
+			$.messager.show({
+				title : '提示',
+				msg : '请勾选要删除的记录！'
+			});
+		}
+	}
+	function admin_yhgl_deleteFun(id) {
+		$('#admin_yhgl_datagrid').datagrid('uncheckAll').datagrid('unselectAll').datagrid('clearSelections');
+		$('#admin_yhgl_datagrid').datagrid('checkRow', $('#admin_yhgl_datagrid').datagrid('getRowIndex', id));
+		admin_yhgl_removeFun();
+	}
+	function admin_yhgl_modifyPwdFun(id) {
+		$('<div/>').dialog({
+			href : '${pageContext.request.contextPath}/admin/yhglEditPwd.jsp',
+			width : 300,
+			height : 200,
+			modal : true,
+			title : '编辑用户密码',
+			buttons : [ {
+				text : '编辑',
+				iconCls : 'icon-edit',
+				handler : function() {
+					var d = $(this).closest('.window-body');
+					$('#admin_yhglEditPwd_editForm').form('submit', {
+						url : '${pageContext.request.contextPath}/userController/modifyPwd.action',
+						success : function(result) {
+							try {
+								var r = $.parseJSON(result);
+								if (r.success) {
+									d.dialog('destroy');
+									$('#admin_yhgl_datagrid').datagrid('uncheckAll').datagrid('unselectAll').datagrid('clearSelections');
+								}
+								$.messager.show({
+									title : '提示',
+									msg : r.msg
+								});
+							} catch (e) {
+								$.messager.alert('提示', result);
+							}
+						}
+					});
+				}
+			} ],
+			onClose : function() {
+				$(this).dialog('destroy');
+			},
+			onLoad : function() {
+				$('#admin_yhglEditPwd_editForm').form('load', {
+					id : id
+				});
+			}
+		});
+	}
+	function admin_yhgl_modifyRoleFun() {
+		var rows = $('#admin_yhgl_datagrid').datagrid('getChecked');
+		var ids = [];
+		if (rows.length > 0) {
+			for ( var i = 0; i < rows.length; i++) {
+				ids.push(rows[i].id);
+			}
+			$('<div/>').dialog({
+				href : '${pageContext.request.contextPath}/admin/yhglEditRole.jsp',
+				width : 300,
+				height : 200,
+				modal : true,
+				title : '批量编辑用户角色',
+				buttons : [ {
+					text : '编辑',
+					iconCls : 'icon-edit',
+					handler : function() {
+						var d = $(this).closest('.window-body');
+						$('#admin_yhglEditRole_editForm').form('submit', {
+							url : '${pageContext.request.contextPath}/userController/modifyRole.action',
+							success : function(result) {
+								try {
+									var r = $.parseJSON(result);
+									if (r.success) {
+										$('#admin_yhgl_datagrid').datagrid('load');
+										$('#admin_yhgl_datagrid').datagrid('uncheckAll').datagrid('unselectAll').datagrid('clearSelections');
+										d.dialog('destroy');
+									}
+									$.messager.show({
+										title : '提示',
+										msg : r.msg
+									});
+								} catch (e) {
+									$.messager.alert('提示', result);
+								}
+							}
+						});
+					}
+				} ],
+				onClose : function() {
+					$(this).dialog('destroy');
+				},
+				onLoad : function() {
+					$('#admin_yhglEditRole_editForm').form('load', {
+						ids : ids
+					});
+				}
+			});
+		} else {
+			$.messager.show({
+				title : '提示',
+				msg : '请勾选要编辑的记录！'
+			});
+		}
+	}
+</script>
+<div class="easyui-layout" data-options="fit : true,border : false">
+	<div data-options="region:'north',title:'查询条件',border:false" style="height: 165px;overflow: hidden;" align="center">
+		<form id="admin_yhgl_searchForm">
+			<table style="margin-top:4px;">
+				<tr align="right">
+					<th>姓名:</th>
+					<td><input type="text" class="easyui-textbox" name="realName" /></td>
+					<th>手机号:</th>
+					<td><input class="easyui-numberbox" type="text" name="userPhone" data-options="min:1,"/></td>
+				</tr>
+				<tr align="right">
+					<th>注册时间:</th>
+					<td><input type="text" class="easyui-datebox" editable="false" name="startTime" /></td>
+					<th>到:</th>
+					<td><input type="text" class="easyui-datebox" editable="false" name="endTime" /></td>
+					<td><a id="btn" href="javascript:search();" class="easyui-linkbutton" data-options="iconCls:'icon-search'">搜索</a></td>
+					<td><a id="btn" href="javascript:clear();" class="easyui-linkbutton" data-options="iconCls:'icon-undo'">重置</a></td>
+				</tr>
+			</table>
+		</form>
+	</div>
+	<div data-options="region:'center',border:false">
+		<table id="admin_yhgl_datagrid"></table>
+	</div>
+</div>

@@ -1,0 +1,137 @@
+Table: t_admin
+----------+--------------+------+-----+---------+---------
+ Field    | Type         | Null | Key | Default | Remarks 
+----------+--------------+------+-----+---------+---------
+ id       | INT(10)      | NO   | PRI |         |         
+ userName | VARCHAR(255) | YES  |     |         | 用户名     
+ password | VARCHAR(255) | YES  |     |         | 密码      
+----------+--------------+------+-----+---------+---------
+
+Table: t_cancel_order
+---------------+---------------+------+-----+-------------------+---------
+ Field         | Type          | Null | Key | Default           | Remarks 
+---------------+---------------+------+-----+-------------------+---------
+ cancelOrderId | INT(10)       | NO   | PRI |                   | 取消订单记录表 
+ orderId       | INT(10)       | YES  |     |                   | 订单id    
+ userId        | INT(10)       | YES  |     |                   | 用户id    
+ cancelTime    | TIMESTAMP(19) | YES  |     | CURRENT_TIMESTAMP | 取消订单的时间 
+---------------+---------------+------+-----+-------------------+---------
+
+Table: t_change_phone
+-----------------+--------------+------+-----+---------+---------
+ Field           | Type         | Null | Key | Default | Remarks 
+-----------------+--------------+------+-----+---------+---------
+ changePhoneId   | INT(10)      | NO   | PRI |         | 用户更换手机号的记录
+ userId          | INT(10)      | YES  |     |         | 用户id    
+ changePhoneTime | DATETIME(19) | YES  |     |         | 更换手机号码的时间
+-----------------+--------------+------+-----+---------+---------
+
+Table: t_comment
+-----------+---------------+------+-----+-------------------+---------
+ Field     | Type          | Null | Key | Default           | Remarks 
+-----------+---------------+------+-----+-------------------+---------
+ commentId | INT(10)       | NO   | PRI |                   | 订单评论表   
+ orderId   | INT(10)       | YES  |     |                   | 订单id    
+ grade     | INT(10)       | YES  |     |                   | 评分      
+ gradeTime | TIMESTAMP(19) | YES  |     | CURRENT_TIMESTAMP | 评分时间    
+-----------+---------------+------+-----+-------------------+---------
+
+Table: t_driver_position
+--------------+---------------+------+-----+-------------------+---------
+ Field        | Type          | Null | Key | Default           | Remarks 
+--------------+---------------+------+-----+-------------------+---------
+ positionId   | VARCHAR(64)   | NO   | PRI |                   | 司机位置表   
+ driverId     | INT(10)       | YES  |     |                   | 司机的id   
+ lon          | DOUBLE(11,6)  | YES  |     |                   | 经度      
+ lat          | DOUBLE(11,6)  | YES  |     |                   | 纬度      
+ positionTime | TIMESTAMP(19) | YES  |     | CURRENT_TIMESTAMP | 添加记录的时间 
+--------------+---------------+------+-----+-------------------+---------
+
+Table: t_message
+------------+---------------+------+-----+-------------------+---------
+ Field      | Type          | Null | Key | Default           | Remarks 
+------------+---------------+------+-----+-------------------+---------
+ messageId  | INT(10)       | NO   | PRI |                   | 消息表     
+ userId     | INT(10)       | YES  |     |                   | 用户id    
+ msgContent | VARCHAR(500)  | YES  |     |                   | 消息内容    
+ msgTime    | TIMESTAMP(19) | YES  |     | CURRENT_TIMESTAMP | 消息添加时间  
+ read       | INT(10)       | YES  |     | 0                 | 0未读,1已读 
+------------+---------------+------+-----+-------------------+---------
+
+Table: t_order
+----------------------+---------------+------+-----+-------------------+---------
+ Field                | Type          | Null | Key | Default           | Remarks 
+----------------------+---------------+------+-----+-------------------+---------
+ orderId              | INT(10)       | NO   | PRI |                   | 订单表     
+ userId               | INT(10)       | YES  |     |                   | 用户id    
+ helpPersonPhone      | VARCHAR(255)  | YES  |     |                   | 被替下单的号码 
+ whoPay               | INT(10)       | YES  |     |                   | 由谁支付(0线下,1线上)
+ orderType            | INT(10)       | YES  |     | 0                 | 订单状态(0普通订单,1司机报单)
+ orderState           | INT(10)       | YES  |     | 0                 | 订单状态(0下单,1已接单,2支付完成)
+ commentState         | INT(10)       | YES  |     | 0                 | 评论状态(0未评论,1已评论)
+ userDeleteState      | INT(10)       | YES  |     | 0                 | 用户删除状态(0未删除,1已删除)
+ driverDeleteState    | INT(10)       | YES  |     | 0                 | 司机删除状态(0未删除,1已删除)
+ addOrderTime         | TIMESTAMP(19) | YES  |     | CURRENT_TIMESTAMP | 下单时间    
+ startPlaceLon        | DOUBLE(22)    | YES  |     |                   | 起始地方的经度 
+ startPlaceLat        | DOUBLE(22)    | YES  |     |                   | 起始地方的纬度 
+ startPlaceName       | VARCHAR(255)  | YES  |     |                   | 起始地点名   
+ startPlaceAddress    | VARCHAR(500)  | YES  |     |                   | 起始地地址   
+ driveEndLon          | DOUBLE(22)    | YES  |     |                   | 代驾结束的经度 
+ driveEndlat          | DOUBLE(22)    | YES  |     |                   | 代驾结束的纬度 
+ driveEndName         | VARCHAR(255)  | YES  |     |                   | 代驾结束的地点名
+ driveEndAddress      | VARCHAR(500)  | YES  |     |                   | 代驾结束的地址 
+ orderDistance        | DOUBLE(22)    | YES  |     |                   | 订单起始地到结束地的距离
+ driveMoney           | DOUBLE(22)    | YES  |     | 0                 | 代驾费用    
+ reportOrderUserPhone | VARCHAR(50)   | YES  |     |                   | 报单的用户号码 
+ driverId             | INT(10)       | YES  |     |                   | 接单的司机id 
+ acceptOrderLon       | DOUBLE(22)    | YES  |     |                   | 接单的经度   
+ acceptOrderLat       | DOUBLE(22)    | YES  |     |                   | 接单的纬度   
+ acceptOrderTime      | DATETIME(19)  | YES  |     |                   | 接单时间    
+ startPlaceDistance   | DOUBLE(11)    | YES  |     |                   | 接单地到起始地的距离(km)
+ startPlaceMoney      | DOUBLE(22)    | YES  |     | 0                 | 接单地到达起始地所产生的费用
+ waitStartTime        | DATETIME(19)  | YES  |     |                   | 开始等待的时间(到达起始地的时间)
+ waitEndTime          | DATETIME(19)  | YES  |     |                   | 等待结束的时间(代驾开始的时间)
+ waitMoney            | DOUBLE(22)    | YES  |     | 0                 | 在起始地等待所产生的费用
+ driveEndTime         | DATETIME(19)  | YES  |     |                   | 代驾结束的时间 
+ extraMoney           | DOUBLE(22)    | YES  |     | 0                 | 额外费用(路桥费,停车费)
+ driveTotalMoney      | DOUBLE(22)    | YES  |     | 0                 | 代驾的总费用  
+----------------------+---------------+------+-----+-------------------+---------
+
+Table: t_tree
+---------+--------------+------+-----+---------+---------
+ Field   | Type         | Null | Key | Default | Remarks 
+---------+--------------+------+-----+---------+---------
+ id      | INT(10)      | NO   | PRI |         | 后台菜单树   
+ text    | VARCHAR(500) | YES  |     |         | 菜单描述    
+ iconCls | VARCHAR(50)  | YES  |     |         |         
+ url     | VARCHAR(500) | YES  |     |         | 属性      
+ plevel  | INT(10)      | YES  |     |         | 上级      
+---------+--------------+------+-----+---------+---------
+
+Table: t_user
+-------------+---------------+------+-----+-------------------+---------
+ Field       | Type          | Null | Key | Default           | Remarks 
+-------------+---------------+------+-----+-------------------+---------
+ userId      | INT(10)       | NO   | PRI |                   | 用户表     
+ userPhone   | VARCHAR(50)   | YES  |     |                   | 手机号码    
+ userName    | VARCHAR(255)  | YES  |     |                   | 用户名     
+ IDcard      | VARCHAR(50)   | YES  |     |                   | 身份证号码   
+ userRole    | INT(10)       | YES  |     |                   | 用户角色,0: 系统管理员, 1,用户, 2,司机
+ headImg     | VARCHAR(500)  | YES  |     |                   | 用户头像    
+ userMoney   | DOUBLE(22)    | YES  |     | 0                 | 用户余额(司机才有)
+ AcceptState | INT(10)       | YES  |     | 0                 | 司机是否开启接单(0开启,1关闭)
+ addTime     | TIMESTAMP(19) | YES  |     | CURRENT_TIMESTAMP | 创建时间    
+-------------+---------------+------+-----+-------------------+---------
+
+Table: tmenu
+---------+--------------+------+-----+---------+---------
+ Field   | Type         | Null | Key | Default | Remarks 
+---------+--------------+------+-----+---------+---------
+ id      | VARCHAR(36)  | NO   | PRI |         |         
+ iconCls | VARCHAR(50)  | YES  |     |         |         
+ seq     | INT(10)      | YES  |     |         |         
+ text    | VARCHAR(100) | NO   |     |         |         
+ url     | VARCHAR(200) | YES  |     |         |         
+ pid     | VARCHAR(36)  | YES  |     |         |         
+---------+--------------+------+-----+---------+---------
+
