@@ -75,7 +75,7 @@ public class CommentController extends BaseController {
 		System.out.println(request.getAuthType());
 		System.out.println(request.getContextPath());
 		Cookie[] cookies = request.getCookies();
-		renderText("success");  
+		renderText("success");   
 	}
 	
 	
